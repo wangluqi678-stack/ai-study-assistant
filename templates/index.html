@@ -962,7 +962,7 @@
       </div>`;
 
     try {
-      const resp = await fetch(`/api/analyze`, {
+      const resp = await fetch(`https://ai-study-assistant-kohl-nine.vercel.app/api/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ profile, entries }),
