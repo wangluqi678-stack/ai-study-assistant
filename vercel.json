@@ -1,8 +1,17 @@
 {
+  "version": 2,
   "builds": [
     {
       "src": "server.py",
       "use": "@vercel/python"
+    },
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "profile.html",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -11,12 +20,12 @@
       "dest": "server.py"
     },
     {
-      "src": "/",
-      "dest": "/index.html"
-    },
-    {
       "src": "/profile.html",
       "dest": "/profile.html"
+    },
+    {
+      "src": "/",
+      "dest": "/index.html"
     }
   ]
 }
