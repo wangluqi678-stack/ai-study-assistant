@@ -6,12 +6,20 @@ AI学伴后端服务
 
 import json
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from openai import OpenAI
 
 app = Flask(__name__)
 CORS(app)
+
+@app.route('/')
+def home():
+    return send_from_directory('templates', 'index.html')
+
+@app.route('/profile.html')
+def profile():
+    return send_from_directory('templates', 'profile.html')
 
 # Kimi API（兼容 OpenAI 格式）
 # 从环境变量读取，也可直接替换为字符串：api_key="sk-..."
