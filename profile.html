@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>我的中心 · AI学伴</title>
+  <style>
+    :root {
+      --green-light: #e8f5e9;
+      --green-mid:   #a5d6a7;
+      --green-dark:  #4caf50;
+      --blue-light:  #e3f2fd;
+      --blue-mid:    #90caf9;
+      --blue-dark:   #1976d2;
+      --teal:        #26a69a;
+      --white:       #ffffff;
+      --bg:          #f0f7f4;
+      --text:        #2e3a36;
+      --text-muted:  #6b8f7a;
+      --border:      #c8e6c9;
+      --shadow:      0 4px 20px rgba(76,175,80,.10);
+      --radius:      14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      background: var(--white);
+      border-bottom: 2px solid var(--green-mid);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(76,175,80,.08);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--teal);
+      text-decoration: none;
+    }
+    .btn-back {
+      background: var(--green-light);
+      color: var(--teal);
+      border: 1.5px solid var(--green-mid);
+      border-radius: 8px;
+      padding: 7px 18px;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-back:hover { background: var(--green-mid); color: var(--white); }
+
+    /* LAYOUT */
+    .page-header {
+      background: linear-gradient(135deg, var(--green-light), var(--blue-light));
+      border-bottom: 1px solid var(--border);
+      padding: 36px 32px 28px;
+      text-align: center;
+    }
+    .page-header h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--teal);
+      margin-bottom: 6px;
+    }
+    .page-header p { font-size: 14px; color: var(--text-muted); }
+
+    main {
+      max-width: 880px;
+      margin: 30px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 720px) {
+      main { grid-template-columns: 1fr; }
+      nav { padding: 0 16px; }
+    }
+
+    /* CARD */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 26px 24px;
+      border: 1px solid var(--border);
+    }
+    .card h2 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--teal);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* PROFILE CARD */
+    .profile-avatar-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .profile-avatar {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green-mid), var(--blue-mid));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px; color: white; font-weight: 800;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 14px rgba(38,166,154,.25);
+    }
+    .profile-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .profile-grade {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .profile-field {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .profile-field:last-child { border-bottom: none; }
+    .profile-field .key { color: var(--text-muted); }
+    .profile-field .val { font-weight: 600; color: var(--text); }
+
+    .btn-edit-profile {
+      width: 100%;
+      margin-top: 18px;
+      background: var(--blue-light);
+      color: var(--blue-dark);
+      border: 1.5px solid var(--blue-mid);
+      border-radius: 9px;
+      padding: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .btn-edit-profile:hover { background: var(--blue-mid); color: white; }
+
+    /* RECORDS */
+    .records-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .records-count {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .btn-clear {
+      background: none;
+      border: 1.5px solid #ef9a9a;
+      color: #e53935;
+      border-radius: 7px;
+      padding: 5px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .2s;
+    }
+    .btn-clear:hover { background: #ffebee; }
+
+    .record-list { display: flex; flex-direction: column; gap: 14px; }
+    .record-item {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .record-header {
+      background: var(--green-light);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+    .record-header:hover { background: var(--green-mid); }
+    .record-date {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--teal);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .record-subjects {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .record-chip {
+      font-size: 11px;
+      padding: 2px 9px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+    .record-body {
+      padding: 14px 16px;
+      display: none;
+    }
+    .record-body.open { display: block; }
+    .record-entry { margin-bottom: 12px; }
+    .record-entry:last-child { margin-bottom: 0; }
+    .record-entry-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .record-entry-block {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 6px;
+    }
+    .record-entry-block .block-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+    .record-entry-block .block-text {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+    .empty-records {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+    .empty-records a { color: var(--teal); text-decoration: none; font-weight: 600; }
+
+    /* MODAL EDIT */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      backdrop-filter: blur(3px);
+    }
+    .modal-overlay.hidden { display: none; }
+    .modal {
+      background: var(--white);
+      border-radius: 18px;
+      padding: 32px 30px 26px;
+      width: 90%;
+      max-width: 420px;
+      box-shadow: 0 12px 48px rgba(0,0,0,.18);
+    }
+    .modal h2 {
+      font-size: 20px;
+      color: var(--teal);
+      margin-bottom: 20px;
+      font-weight: 800;
+    }
+    .form-group { margin-bottom: 14px; }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--text);
+      outline: none;
+      transition: border .18s;
+      appearance: none;
+    }
+    .form-group input:focus,
+    .form-group select:focus { border-color: var(--teal); }
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .btn-confirm {
+      flex: 1;
+      background: linear-gradient(135deg, var(--green-dark), var(--teal));
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-cancel {
+      flex: 1;
+      background: var(--bg);
+      color: var(--text-muted);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 15px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--teal);
+      color: white;
+      padding: 12px 30px;
+      border-radius: 30px;
+      font-size: 15px;
+      font-weight: 600;
+      box-shadow: 0 6px 24px rgba(38,166,154,.35);
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+      z-index: 999;
+      pointer-events: none;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    footer {
+      text-align: center;
+      padding: 24px 20px;
+      font-size: 13px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      margin-top: 10px;
+    }
+
+    /* subject colors */
+    .c-chinese  { background: #fff3e0; color: #e65100; }
+    .c-math     { background: #e8eaf6; color: #3949ab; }
+    .c-english  { background: #f3e5f5; color: #7b1fa2; }
+    .c-physics  { background: #e0f2f1; color: #00695c; }
+    .c-chemistry{ background: #fce4ec; color: #c62828; }
+    .c-biology  { background: #f1f8e9; color: #558b2f; }
+    .c-history  { background: #fff8e1; color: #f57f17; }
+    .c-geography{ background: #e1f5fe; color: #01579b; }
+    .c-politics { background: #fbe9e7; color: #bf360c; }
+
+    /* AI Analysis in records */
+    .ai-analysis-section {
+      margin-top: 14px;
+      border-top: 1px dashed var(--border);
+      padding-top: 12px;
+    }
+    .ai-analysis-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--teal);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .ai-badge {
+      font-size: 10px;
+      background: var(--teal);
+      color: white;
+      border-radius: 8px;
+      padding: 1px 7px;
+    }
+    .ai-sub-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin: 8px 0 5px;
+    }
+    .ai-subject-block {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 9px 12px;
+      margin-bottom: 6px;
+    }
+    .ai-subject-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--teal);
+      margin-bottom: 4px;
+    }
+    .ai-points {
+      list-style: none;
+      padding: 0; margin: 0 0 4px;
+    }
+    .ai-points li {
+      font-size: 12px;
+      color: var(--text);
+      padding-left: 12px;
+      position: relative;
+      line-height: 1.5;
+    }
+    .ai-points li::before { content: "•"; position: absolute; left: 0; color: var(--teal); }
+    .ai-tips { font-size: 11px; color: var(--text-muted); font-style: italic; }
+    .ai-resource-item {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 5px;
+    }
+    .ai-resource-link {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--blue-dark);
+      text-decoration: none;
+    }
+    .ai-resource-link:hover { text-decoration: underline; }
+    .ai-resource-desc { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+    .ai-plan-box {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 9px 12px;
+    }
+    .ai-plan-row { font-size: 12px; color: var(--text); margin-bottom: 4px; line-height: 1.5; }
+    .ai-plan-row:last-child { margin-bottom: 0; }
+    .ai-plan-key { font-weight: 700; color: var(--teal); }
+    .ai-encourage { color: #e65100; font-weight: 600; font-style: italic; }
+  </style>
+</head>
+<body>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay hidden" id="editModal">
+  <div class="modal">
+    <h2>✏️ 修改个人信息</h2>
+    <div class="form-group">
+      <label>昵称</label>
+      <input type="text" id="editNickname" maxlength="20" />
+    </div>
+    <div class="form-group">
+      <label>年级</label>
+      <select id="editGrade">
+        <option value="">请选择年级</option>
+        <optgroup label="小学">
+          <option value="小学一年级">小学一年级</option>
+          <option value="小学二年级">小学二年级</option>
+          <option value="小学三年级">小学三年级</option>
+          <option value="小学四年级">小学四年级</option>
+          <option value="小学五年级">小学五年级</option>
+          <option value="小学六年级">小学六年级</option>
+        </optgroup>
+        <optgroup label="初中">
+          <option value="初中一年级">初中一年级（初一）</option>
+          <option value="初中二年级">初中二年级（初二）</option>
+          <option value="初中三年级">初中三年级（初三）</option>
+        </optgroup>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>学校名称</label>
+      <input type="text" id="editSchool" maxlength="40" />
+    </div>
+    <div class="form-group">
+      <label>所在地区</label>
+      <input type="text" id="editRegion" maxlength="30" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeEdit()">取消</button>
+      <button class="btn-confirm" onclick="confirmEdit()">保存修改</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html">
+    <span>📚</span>
+    <span>AI学伴</span>
+  </a>
+  <a class="btn-back" href="index.html">← 返回主页</a>
+</nav>
+
+<div class="page-header">
+  <h1>我的学习中心</h1>
+  <p>查看和管理你的个人信息与每日学习记录</p>
+</div>
+
+<main>
+
+  <!-- 个人信息 -->
+  <div>
+    <div class="card" id="profileCard">
+      <h2>👤 个人信息</h2>
+      <div class="profile-avatar-wrap">
+        <div class="profile-avatar" id="profileAvatar">?</div>
+        <div class="profile-name" id="profileName">未设置</div>
+        <div class="profile-grade" id="profileGradeLabel"></div>
+      </div>
+      <div id="profileFields"></div>
+      <button class="btn-edit-profile" onclick="openEdit()">✏️ 修改个人信息</button>
+    </div>
+  </div>
+
+  <!-- 每日记录 -->
+  <div>
+    <div class="card">
+      <h2>📋 每日学习记录</h2>
+      <div class="records-toolbar">
+        <span class="records-count" id="recordsCount">共 0 条记录</span>
+        <button class="btn-clear" onclick="clearAllRecords()">清空所有记录</button>
+      </div>
+      <div class="record-list" id="recordList">
+        <div class="empty-records">
+          暂无记录，去<a href="index.html">主页</a>填写今天的学习内容吧！
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>AI学伴 · 义务教育信息平等与资源匹配平台 · 让每一位孩子都能平等地获取优质教育资源</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const SUBJECTS = [
+    { id: 'chinese',   label: '语文',   cls: 'c-chinese'   },
+    { id: 'math',      label: '数学',   cls: 'c-math'      },
+    { id: 'english',   label: '英语',   cls: 'c-english'   },
+    { id: 'physics',   label: '物理',   cls: 'c-physics'   },
+    { id: 'chemistry', label: '化学',   cls: 'c-chemistry' },
+    { id: 'biology',   label: '生物',   cls: 'c-biology'   },
+    { id: 'history',   label: '历史',   cls: 'c-history'   },
+    { id: 'geography', label: '地理',   cls: 'c-geography' },
+    { id: 'politics',  label: '道德与法治', cls: 'c-politics' },
+  ];
+
+  function getProfile() {
+    try { return JSON.parse(localStorage.getItem('aiXueBan_profile')); } catch { return null; }
+  }
+  function getRecords() {
+    try { return JSON.parse(localStorage.getItem('aiXueBan_records')) || []; } catch { return []; }
+  }
+
+  function init() {
+    renderProfile();
+    renderRecords();
+  }
+
+  function renderProfile() {
+    const p = getProfile();
+    if (!p) {
+      document.getElementById('profileFields').innerHTML =
+        '<p style="color:var(--text-muted);font-size:14px;text-align:center;padding:10px 0;">尚未填写个人信息<br><a href="index.html" style="color:var(--teal)">前往主页填写</a></p>';
+      return;
+    }
+    const name = p.nickname || '同学';
+    document.getElementById('profileAvatar').textContent = name.charAt(0).toUpperCase();
+    document.getElementById('profileName').textContent = name;
+    document.getElementById('profileGradeLabel').textContent = p.grade || '';
+
+    const fields = [
+      { key: '年级', val: p.grade || '未填写' },
+      { key: '学校', val: p.school || '未填写' },
+      { key: '地区', val: p.region || '未填写' },
+      { key: '加入时间', val: p.createdAt ? new Date(p.createdAt).toLocaleDateString('zh-CN') : '未知' },
+    ];
+    document.getElementById('profileFields').innerHTML = fields.map(f =>
+      `<div class="profile-field"><span class="key">${f.key}</span><span class="val">${f.val}</span></div>`
+    ).join('');
+  }
+
+  function renderRecords() {
+    const records = getRecords();
+    document.getElementById('recordsCount').textContent = `共 ${records.length} 条记录`;
+    const container = document.getElementById('recordList');
+    if (records.length === 0) {
+      container.innerHTML = '<div class="empty-records">暂无记录，去<a href="index.html">主页</a>填写今天的学习内容吧！</div>';
+      return;
+    }
+    container.innerHTML = records.map((r, idx) => {
+      const chips = r.entries.map(e => {
+        const s = SUBJECTS.find(x => x.id === e.subjectId);
+        return `<span class="record-chip ${s ? s.cls : ''}">${e.subjectLabel}</span>`;
+      }).join('');
+      const entriesHtml = r.entries.map(e => {
+        const s = SUBJECTS.find(x => x.id === e.subjectId);
+        return `
+          <div class="record-entry">
+            <div class="record-entry-title">
+              <span class="record-chip ${s ? s.cls : ''}" style="font-size:12px">${e.subjectLabel}</span>
+            </div>
+            ${e.learned ? `<div class="record-entry-block">
+              <div class="block-label">📖 学了什么</div>
+              <div class="block-text">${escHtml(e.learned)}</div>
+            </div>` : ''}
+            ${e.confused ? `<div class="record-entry-block">
+              <div class="block-label">❓ 哪里不懂</div>
+              <div class="block-text">${escHtml(e.confused)}</div>
+            </div>` : ''}
+          </div>
+        `;
+      }).join('');
+
+      const aiHtml = r.aiAnalysis ? renderAiAnalysisHtml(r.aiAnalysis) : '';
+
+      return `
+        <div class="record-item">
+          <div class="record-header" onclick="toggleRecord(${idx})">
+            <div class="record-date">📅 ${r.date}${r.aiAnalysis ? ' 🤖' : ''}</div>
+            <div class="record-subjects">${chips}</div>
+          </div>
+          <div class="record-body" id="record-body-${idx}">
+            ${entriesHtml}
+            ${aiHtml}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderAiAnalysisHtml(data) {
+    if (!data) return '';
+    let html = `<div class="ai-analysis-section">
+      <div class="ai-analysis-title">🤖 AI学习分析 <span class="ai-badge">智能辅导</span></div>`;
+
+    if (data.summary && data.summary.length > 0) {
+      html += `<div class="ai-sub-title">📖 知识点总结</div>`;
+      data.summary.forEach(s => {
+        html += `<div class="ai-subject-block">
+          <div class="ai-subject-name">${escHtml(s.subject)}</div>
+          <ul class="ai-points">${(s.points||[]).map(p=>`<li>${escHtml(p)}</li>`).join('')}</ul>
+          ${s.tips ? `<div class="ai-tips">💡 ${escHtml(s.tips)}</div>` : ''}
+        </div>`;
+      });
+    }
+
+    if (data.resources && data.resources.length > 0) {
+      html += `<div class="ai-sub-title">🔗 免费学习资源</div>`;
+      data.resources.forEach(r => {
+        html += `<div class="ai-resource-item">
+          <a class="ai-resource-link" href="${escHtml(r.url||'#')}" target="_blank" rel="noopener">${escHtml(r.title||'')}</a>
+          ${r.desc ? `<div class="ai-resource-desc">${escHtml(r.desc)}</div>` : ''}
+        </div>`;
+      });
+    }
+
+    if (data.plan) {
+      const p = data.plan;
+      html += `<div class="ai-sub-title">📅 学习计划</div>
+        <div class="ai-plan-box">`;
+      if (p.today) html += `<div class="ai-plan-row"><span class="ai-plan-key">今天：</span>${escHtml(p.today)}</div>`;
+      if (p.week)  html += `<div class="ai-plan-row"><span class="ai-plan-key">本周：</span>${escHtml(p.week)}</div>`;
+      if (p.encouragement) html += `<div class="ai-plan-row ai-encourage">✨ ${escHtml(p.encouragement)}</div>`;
+      html += `</div>`;
+    }
+
+    html += `</div>`;
+    return html;
+  }
+
+  function toggleRecord(idx) {
+    const body = document.getElementById(`record-body-${idx}`);
+    body.classList.toggle('open');
+  }
+
+  function escHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function clearAllRecords() {
+    if (!confirm('确认清空所有学习记录？此操作不可撤销。')) return;
+    localStorage.removeItem('aiXueBan_records');
+    renderRecords();
+    showToast('已清空所有记录');
+  }
+
+  // EDIT MODAL
+  function openEdit() {
+    const p = getProfile() || {};
+    document.getElementById('editNickname').value = p.nickname || '';
+    document.getElementById('editGrade').value    = p.grade    || '';
+    document.getElementById('editSchool').value   = p.school   || '';
+    document.getElementById('editRegion').value   = p.region   || '';
+    document.getElementById('editModal').classList.remove('hidden');
+  }
+  function closeEdit() {
+    document.getElementById('editModal').classList.add('hidden');
+  }
+  function confirmEdit() {
+    const nickname = document.getElementById('editNickname').value.trim();
+    const grade    = document.getElementById('editGrade').value;
+    const school   = document.getElementById('editSchool').value.trim();
+    const region   = document.getElementById('editRegion').value.trim();
+    if (!nickname) { alert('请填写昵称'); return; }
+    if (!grade)    { alert('请选择年级'); return; }
+    if (!school)   { alert('请填写学校名称'); return; }
+    const existing = getProfile() || {};
+    const profile = { ...existing, nickname, grade, school, region };
+    localStorage.setItem('aiXueBan_profile', JSON.stringify(profile));
+    closeEdit();
+    renderProfile();
+    showToast('✅ 个人信息已更新');
+  }
+
+  // TOAST
+  let toastTimer;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+  }
+
+  init();
+</script>
+</body>
+</html>

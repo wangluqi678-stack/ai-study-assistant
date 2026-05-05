@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI学伴 · 义务教育信息平等与资源匹配平台</title>
+  <style>
+    :root {
+      --green-light: #e8f5e9;
+      --green-mid:   #a5d6a7;
+      --green-dark:  #4caf50;
+      --blue-light:  #e3f2fd;
+      --blue-mid:    #90caf9;
+      --blue-dark:   #1976d2;
+      --teal:        #26a69a;
+      --white:       #ffffff;
+      --bg:          #f0f7f4;
+      --text:        #2e3a36;
+      --text-muted:  #6b8f7a;
+      --border:      #c8e6c9;
+      --shadow:      0 4px 20px rgba(76,175,80,0.10);
+      --radius:      14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ===== NAV ===== */
+    nav {
+      background: var(--white);
+      border-bottom: 2px solid var(--green-mid);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(76,175,80,0.08);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--teal);
+      text-decoration: none;
+    }
+    .nav-logo .icon { font-size: 28px; }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .nav-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      color: var(--text-muted);
+    }
+    .nav-user .avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green-mid), var(--blue-mid));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: white; font-weight: 700;
+    }
+    .btn-profile {
+      background: var(--blue-light);
+      color: var(--blue-dark);
+      border: 1.5px solid var(--blue-mid);
+      border-radius: 8px;
+      padding: 7px 18px;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all .2s;
+    }
+    .btn-profile:hover {
+      background: var(--blue-mid);
+      color: var(--white);
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      background: linear-gradient(135deg, var(--green-light) 0%, var(--blue-light) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 48px 32px 36px;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 30px;
+      font-weight: 800;
+      color: var(--teal);
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+    .hero p {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 560px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: var(--teal);
+      color: white;
+      font-size: 12px;
+      padding: 3px 12px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+      letter-spacing: 1px;
+    }
+
+    /* ===== MAIN LAYOUT ===== */
+    main {
+      max-width: 900px;
+      margin: 36px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 700px) {
+      main { grid-template-columns: 1fr; }
+      nav { padding: 0 16px; }
+      .hero { padding: 32px 16px 24px; }
+      .hero h1 { font-size: 22px; }
+    }
+
+    /* ===== CARD ===== */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px 26px;
+      border: 1px solid var(--border);
+    }
+    .card-full { grid-column: 1 / -1; }
+    .card h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--teal);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card h2 .icon { font-size: 22px; }
+
+    /* ===== DATE BAR ===== */
+    .date-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--green-light);
+      border-radius: 10px;
+      padding: 12px 18px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+    }
+    .date-bar .date-text {
+      font-size: 15px;
+      color: var(--teal);
+      font-weight: 600;
+    }
+    .date-bar .day-text {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* ===== SUBJECT TABS ===== */
+    .subject-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .subject-tab {
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      color: var(--text-muted);
+      transition: all .18s;
+      user-select: none;
+    }
+    .subject-tab.active {
+      background: var(--teal);
+      color: white;
+      border-color: var(--teal);
+    }
+    .subject-tab:hover:not(.active) {
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
+    /* ===== SUBJECT ENTRY ===== */
+    .subject-entries { display: flex; flex-direction: column; gap: 14px; }
+    .subject-entry {
+      background: var(--bg);
+      border-radius: 10px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+    }
+    .subject-entry-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .subject-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    .subject-entry-header span {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .entry-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    textarea {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--text);
+      background: var(--white);
+      resize: vertical;
+      min-height: 60px;
+      transition: border .18s;
+      outline: none;
+    }
+    textarea:focus { border-color: var(--teal); }
+    textarea::placeholder { color: #b0bec5; }
+    .entry-row { margin-bottom: 8px; }
+    .entry-row:last-child { margin-bottom: 0; }
+
+    /* ===== SUBMIT AREA ===== */
+    .submit-area {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 14px;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .btn-save {
+      background: linear-gradient(135deg, var(--green-dark), var(--teal));
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 36px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity .2s, transform .15s;
+      letter-spacing: 1px;
+    }
+    .btn-save:hover { opacity: .9; transform: translateY(-1px); }
+    .btn-save:active { transform: translateY(0); }
+    .save-hint {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* ===== QUICK STATS ===== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .stat-item {
+      background: var(--green-light);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    .stat-item .num {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--teal);
+    }
+    .stat-item .label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ===== RECENT LOG ===== */
+    .log-list { display: flex; flex-direction: column; gap: 10px; }
+    .log-item {
+      background: var(--bg);
+      border-radius: 9px;
+      padding: 12px 14px;
+      border-left: 3px solid var(--green-dark);
+      font-size: 13px;
+      color: var(--text);
+    }
+    .log-item .log-date {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .log-item .log-subjects {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 5px;
+    }
+    .log-chip {
+      font-size: 11px;
+      padding: 2px 9px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+    .empty-log {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 14px;
+      padding: 24px 0;
+    }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--teal);
+      color: white;
+      padding: 13px 32px;
+      border-radius: 30px;
+      font-size: 15px;
+      font-weight: 600;
+      box-shadow: 0 6px 24px rgba(38,166,154,.35);
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+      z-index: 999;
+      pointer-events: none;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ===== ONBOARDING MODAL ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      backdrop-filter: blur(3px);
+    }
+    .modal-overlay.hidden { display: none; }
+    .modal {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 38px 36px 30px;
+      width: 90%;
+      max-width: 440px;
+      box-shadow: 0 12px 48px rgba(0,0,0,.18);
+      position: relative;
+    }
+    .modal-icon {
+      text-align: center;
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+    .modal h2 {
+      text-align: center;
+      font-size: 22px;
+      color: var(--teal);
+      margin-bottom: 6px;
+      font-weight: 800;
+    }
+    .modal .sub {
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 26px;
+      line-height: 1.6;
+    }
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .form-group label .req { color: #ef5350; margin-left: 2px; }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      padding: 10px 14px;
+      font-size: 15px;
+      font-family: inherit;
+      color: var(--text);
+      background: var(--white);
+      outline: none;
+      transition: border .18s;
+      appearance: none;
+    }
+    .form-group input:focus,
+    .form-group select:focus { border-color: var(--teal); }
+    .modal-actions {
+      margin-top: 24px;
+      display: flex;
+      justify-content: center;
+    }
+    .btn-start {
+      background: linear-gradient(135deg, var(--green-dark), var(--teal));
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 13px 48px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: opacity .2s;
+    }
+    .btn-start:hover { opacity: .9; }
+
+    /* ===== FOOTER ===== */
+    footer {
+      text-align: center;
+      padding: 28px 20px;
+      font-size: 13px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      margin-top: 16px;
+    }
+    footer a { color: var(--teal); text-decoration: none; }
+
+    /* subject colors */
+    .c-chinese  { background: #fff3e0; color: #e65100; }
+    .c-math     { background: #e8eaf6; color: #3949ab; }
+    .c-english  { background: #f3e5f5; color: #7b1fa2; }
+    .c-physics  { background: #e0f2f1; color: #00695c; }
+    .c-chemistry{ background: #fce4ec; color: #c62828; }
+    .c-biology  { background: #f1f8e9; color: #558b2f; }
+    .c-history  { background: #fff8e1; color: #f57f17; }
+    .c-geography{ background: #e1f5fe; color: #01579b; }
+    .c-politics { background: #fbe9e7; color: #bf360c; }
+
+    .dot-chinese  { background: #e65100; }
+    .dot-math     { background: #3949ab; }
+    .dot-english  { background: #7b1fa2; }
+    .dot-physics  { background: #00695c; }
+    .dot-chemistry{ background: #c62828; }
+    .dot-biology  { background: #558b2f; }
+    .dot-history  { background: #f57f17; }
+    .dot-geography{ background: #01579b; }
+    .dot-politics { background: #bf360c; }
+
+    /* ===== AI ANALYSIS PANEL ===== */
+    .ai-panel {
+      background: linear-gradient(135deg, #e8f5e9, #e3f2fd);
+      border: 1.5px solid var(--green-mid);
+      border-radius: var(--radius);
+      padding: 22px 22px 18px;
+      margin-top: 18px;
+      display: none;
+    }
+    .ai-panel.visible { display: block; }
+    .ai-panel-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .ai-panel-header h3 {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--teal);
+    }
+    .ai-badge {
+      font-size: 11px;
+      background: var(--teal);
+      color: white;
+      border-radius: 10px;
+      padding: 2px 9px;
+      font-weight: 700;
+    }
+    .ai-section {
+      margin-bottom: 16px;
+    }
+    .ai-section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .ai-subject-block {
+      background: white;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      border: 1px solid var(--border);
+    }
+    .ai-subject-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--teal);
+      margin-bottom: 6px;
+    }
+    .ai-points {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 6px;
+    }
+    .ai-points li {
+      font-size: 13px;
+      color: var(--text);
+      padding: 2px 0 2px 14px;
+      position: relative;
+      line-height: 1.5;
+    }
+    .ai-points li::before {
+      content: "•";
+      position: absolute;
+      left: 2px;
+      color: var(--teal);
+    }
+    .ai-tips {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+    .ai-resource-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .ai-resource-item {
+      background: white;
+      border-radius: 9px;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .ai-resource-icon { font-size: 18px; flex-shrink: 0; }
+    .ai-resource-info { flex: 1; min-width: 0; }
+    .ai-resource-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--blue-dark);
+      text-decoration: none;
+    }
+    .ai-resource-title:hover { text-decoration: underline; }
+    .ai-resource-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .ai-plan-box {
+      background: white;
+      border-radius: 10px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+    }
+    .ai-plan-row {
+      font-size: 13px;
+      color: var(--text);
+      margin-bottom: 6px;
+      line-height: 1.6;
+    }
+    .ai-plan-row:last-child { margin-bottom: 0; }
+    .ai-plan-key {
+      font-weight: 700;
+      color: var(--teal);
+    }
+    .ai-encourage {
+      font-size: 13px;
+      color: #e65100;
+      font-weight: 600;
+      font-style: italic;
+    }
+    .ai-loading {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+    .ai-spinner {
+      width: 20px; height: 20px;
+      border: 3px solid var(--green-mid);
+      border-top-color: var(--teal);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .ai-error {
+      color: #c62828;
+      font-size: 13px;
+      padding: 8px 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== ONBOARDING MODAL ===== -->
+<div class="modal-overlay hidden" id="onboardingModal">
+  <div class="modal">
+    <div class="modal-icon">🌱</div>
+    <h2>欢迎来到 AI学伴</h2>
+    <p class="sub">让每一位同学都能获得平等的学习支持<br>请先填写你的基本信息，仅需一次</p>
+    <div class="form-group">
+      <label>昵称 <span class="req">*</span></label>
+      <input type="text" id="inputNickname" placeholder="请输入你的名字或昵称" maxlength="20" />
+    </div>
+    <div class="form-group">
+      <label>年级 <span class="req">*</span></label>
+      <select id="inputGrade">
+        <option value="">请选择年级</option>
+        <optgroup label="小学">
+          <option value="小学一年级">小学一年级</option>
+          <option value="小学二年级">小学二年级</option>
+          <option value="小学三年级">小学三年级</option>
+          <option value="小学四年级">小学四年级</option>
+          <option value="小学五年级">小学五年级</option>
+          <option value="小学六年级">小学六年级</option>
+        </optgroup>
+        <optgroup label="初中">
+          <option value="初中一年级">初中一年级（七年级）</option>
+          <option value="初中二年级">初中二年级（八年级）</option>
+          <option value="初中三年级">初中三年级（九年级）</option>
+        </optgroup>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>学校名称 <span class="req">*</span></label>
+      <input type="text" id="inputSchool" placeholder="请输入学校全称" maxlength="40" />
+    </div>
+    <div class="form-group">
+      <label>所在地区</label>
+      <input type="text" id="inputRegion" placeholder="省/市/县（选填）" maxlength="30" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-start" onclick="saveProfile()">开始使用 →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== NAV ===== -->
+<nav>
+  <a class="nav-logo" href="#">
+    <span class="icon">📚</span>
+    <span>AI学伴</span>
+  </a>
+  <div class="nav-right">
+    <div class="nav-user">
+      <div class="avatar" id="navAvatar">?</div>
+      <span id="navName">未登录</span>
+    </div>
+    <a class="btn-profile" href="profile.html">我的中心</a>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<div class="hero">
+  <div class="hero-badge">公益 · 免费 · 平等</div>
+  <h1>今天学了什么？</h1>
+  <p>每天记录你的学习内容与疑惑，我们将为你提供知识梳理、匹配合适的学习资源<br>无论你在哪儿，学习无小事，每一个问题都值得被认真对待</p>
+</div>
+
+<!-- ===== MAIN ===== -->
+<main>
+
+  <!-- 每日记录卡片 -->
+  <div class="card card-full">
+    <h2><span class="icon">✏️</span>今日学习记录</h2>
+
+    <div class="date-bar">
+      <div>
+        <div class="date-text" id="todayDate">加载中...</div>
+        <div class="day-text" id="todayDay"></div>
+      </div>
+      <div style="font-size:13px;color:var(--text-muted)">记录每天，进步看得见</div>
+    </div>
+
+    <!-- 科目选择 -->
+    <div style="margin-bottom:12px;font-size:13px;color:var(--text-muted);font-weight:600;">选择今天学习的科目（可多选）</div>
+    <div class="subject-tabs" id="subjectTabs"></div>
+
+    <!-- 科目输入区 -->
+    <div class="subject-entries" id="subjectEntries"></div>
+
+    <div class="submit-area">
+      <span class="save-hint" id="saveHint">选择科目并填写内容后保存</span>
+      <button class="btn-save" id="btnSave" onclick="saveDailyRecord()">💾 保存今日记录</button>
+    </div>
+
+    <!-- AI 分析面板 -->
+    <div class="ai-panel" id="aiPanel">
+      <div class="ai-panel-header">
+        <h3>🤖 AI学习分析</h3>
+        <span class="ai-badge">智能辅导</span>
+      </div>
+      <div id="aiPanelContent"></div>
+    </div>
+  </div>
+
+  <!-- 学习统计 -->
+  <div class="card">
+    <h2><span class="icon">📊</span>我的学习统计</h2>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="num" id="statDays">0</div>
+        <div class="label">累计记录天数</div>
+      </div>
+      <div class="stat-item">
+        <div class="num" id="statSubjects">0</div>
+        <div class="label">累计学科次数</div>
+      </div>
+      <div class="stat-item">
+        <div class="num" id="statQuestions">0</div>
+        <div class="label">提出疑问数</div>
+      </div>
+      <div class="stat-item">
+        <div class="num" id="statStreak">0</div>
+        <div class="label">连续打卡天数</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 近期记录 -->
+  <div class="card">
+    <h2><span class="icon">📋</span>近期记录</h2>
+    <div class="log-list" id="recentLog">
+      <div class="empty-log">暂无记录，快去填写今天的学习内容吧！</div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>AI学伴 · 义务教育信息平等与资源匹配平台</p>
+  <p style="margin-top:6px">让每一位孩子都能平等地获取优质教育资源 · <a href="profile.html">查看个人中心</a></p>
+</footer>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ===== SUBJECTS CONFIG =====
+  const SUBJECTS = [
+    { id: 'chinese',   label: '语文',   cls: 'c-chinese',   dot: 'dot-chinese'   },
+    { id: 'math',      label: '数学',   cls: 'c-math',      dot: 'dot-math'      },
+    { id: 'english',   label: '英语',   cls: 'c-english',   dot: 'dot-english'   },
+    { id: 'physics',   label: '物理',   cls: 'c-physics',   dot: 'dot-physics'   },
+    { id: 'chemistry', label: '化学',   cls: 'c-chemistry', dot: 'dot-chemistry' },
+    { id: 'biology',   label: '生物',   cls: 'c-biology',   dot: 'dot-biology'   },
+    { id: 'history',   label: '历史',   cls: 'c-history',   dot: 'dot-history'   },
+    { id: 'geography', label: '地理',   cls: 'c-geography', dot: 'dot-geography' },
+    { id: 'politics',  label: '道德与法治', cls: 'c-politics', dot: 'dot-politics' },
+  ];
+
+  const DAYS = ['日','一','二','三','四','五','六'];
+  let activeSubjects = new Set();
+
+  // ===== INIT =====
+  function init() {
+    const profile = getProfile();
+    updateNav(profile);
+    if (!profile) {
+      document.getElementById('onboardingModal').classList.remove('hidden');
+    }
+    renderDate();
+    renderSubjectTabs();
+    renderStats();
+    renderRecentLog();
+  }
+
+  function getProfile() {
+    try { return JSON.parse(localStorage.getItem('aiXueBan_profile')); } catch { return null; }
+  }
+  function getRecords() {
+    try { return JSON.parse(localStorage.getItem('aiXueBan_records')) || []; } catch { return []; }
+  }
+  function saveRecords(records) {
+    localStorage.setItem('aiXueBan_records', JSON.stringify(records));
+  }
+
+  function updateNav(profile) {
+    if (!profile) return;
+    const name = profile.nickname || '同学';
+    document.getElementById('navName').textContent = name;
+    document.getElementById('navAvatar').textContent = name.charAt(0).toUpperCase();
+  }
+
+  function renderDate() {
+    const now = new Date();
+    const dateStr = `${now.getFullYear()} 年 ${now.getMonth()+1} 月 ${now.getDate()} 日`;
+    const dayStr = `星期${DAYS[now.getDay()]}`;
+    document.getElementById('todayDate').textContent = dateStr;
+    document.getElementById('todayDay').textContent = dayStr;
+  }
+
+  // ===== SUBJECT TABS =====
+  function renderSubjectTabs() {
+    const container = document.getElementById('subjectTabs');
+    container.innerHTML = '';
+    SUBJECTS.forEach(s => {
+      const tab = document.createElement('div');
+      tab.className = 'subject-tab' + (activeSubjects.has(s.id) ? ' active' : '');
+      tab.textContent = s.label;
+      tab.onclick = () => toggleSubject(s.id);
+      tab.dataset.id = s.id;
+      container.appendChild(tab);
+    });
+    renderSubjectEntries();
+  }
+
+  function toggleSubject(id) {
+    if (activeSubjects.has(id)) {
+      activeSubjects.delete(id);
+    } else {
+      activeSubjects.add(id);
+    }
+    renderSubjectTabs();
+  }
+
+  function renderSubjectEntries() {
+    const container = document.getElementById('subjectEntries');
+    if (activeSubjects.size === 0) {
+      container.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:14px;padding:20px 0;">点击上方科目标签，添加今天学习的科目</div>';
+      return;
+    }
+    const existing = {};
+    container.querySelectorAll('[data-subject-id]').forEach(el => {
+      const id = el.dataset.subjectId;
+      existing[id] = {
+        learned: el.querySelector('.ta-learned').value,
+        confused: el.querySelector('.ta-confused').value
+      };
+    });
+    container.innerHTML = '';
+    activeSubjects.forEach(id => {
+      const s = SUBJECTS.find(x => x.id === id);
+      if (!s) return;
+      const saved = existing[id] || { learned: '', confused: '' };
+      const entry = document.createElement('div');
+      entry.className = 'subject-entry';
+      entry.dataset.subjectId = id;
+      entry.innerHTML = `
+        <div class="subject-entry-header">
+          <div class="subject-dot ${s.dot}"></div>
+          <span>${s.label}</span>
+        </div>
+        <div class="entry-row">
+          <div class="entry-label">📖 今天学了什么</div>
+          <textarea class="ta-learned" placeholder="例：学习了二次方程的解法，复习了上节课的概念..." rows="2">${saved.learned}</textarea>
+        </div>
+        <div class="entry-row">
+          <div class="entry-label">❓ 还有哪里不懂</div>
+          <textarea class="ta-confused" placeholder="例：配方法的步骤还不太清楚，举一反三有困难..." rows="2">${saved.confused}</textarea>
+        </div>
+      `;
+      container.appendChild(entry);
+    });
+  }
+
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ===== SAVE =====
+  const API_BASE = 'http://localhost:5002';
+
+  async function saveDailyRecord() {
+    const profile = getProfile();
+    if (!profile) {
+      document.getElementById('onboardingModal').classList.remove('hidden');
+      return;
+    }
+    if (activeSubjects.size === 0) {
+      showToast('请先选择今天学习的科目');
+      return;
+    }
+    const entries = [];
+    let hasContent = false;
+    document.querySelectorAll('[data-subject-id]').forEach(el => {
+      const id = el.dataset.subjectId;
+      const s = SUBJECTS.find(x => x.id === id);
+      const learned = el.querySelector('.ta-learned').value.trim();
+      const confused = el.querySelector('.ta-confused').value.trim();
+      if (learned || confused) hasContent = true;
+      entries.push({ subjectId: id, subjectLabel: s.label, learned, confused });
+    });
+    if (!hasContent) {
+      showToast('请至少填写一科的学习内容');
+      return;
+    }
+
+    const now = new Date();
+    const dateKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+    const record = {
+      id: Date.now(),
+      date: dateKey,
+      timestamp: now.toISOString(),
+      entries,
+      aiAnalysis: null,
+    };
+
+    const records = getRecords();
+    const idx = records.findIndex(r => r.date === dateKey);
+    if (idx >= 0) records.splice(idx, 1);
+    records.unshift(record);
+    saveRecords(records);
+
+    showToast('✅ 今日学习记录已保存！');
+    document.getElementById('saveHint').textContent = `上次保存：${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+    renderStats();
+    renderRecentLog();
+
+    // 调用 AI 分析
+    await runAiAnalysis(profile, entries, dateKey);
+  }
+
+  async function runAiAnalysis(profile, entries, dateKey) {
+    const panel = document.getElementById('aiPanel');
+    const content = document.getElementById('aiPanelContent');
+    const btn = document.getElementById('btnSave');
+
+    panel.classList.add('visible');
+    btn.disabled = true;
+    btn.textContent = '⏳ AI分析中...';
+    content.innerHTML = `
+      <div class="ai-loading">
+        <div class="ai-spinner"></div>
+        <span>AI正在分析你的学习内容，请稍候…</span>
+      </div>`;
+
+    try {
+      const resp = await fetch(`/api/analyze`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ profile, entries }),
+      });
+      const json = await resp.json();
+
+      if (!resp.ok || !json.ok) {
+        const detail = json.raw ? `\n原始内容：${json.raw.slice(0, 200)}` : '';
+        throw new Error((json.error || '服务器返回错误') + detail);
+      }
+
+      const data = json.data;
+      renderAiPanel(data);
+
+      // 写入记录
+      const records = getRecords();
+      const idx = records.findIndex(r => r.date === dateKey);
+      if (idx >= 0) { records[idx].aiAnalysis = data; saveRecords(records); }
+
+    } catch (err) {
+      content.innerHTML = `<div class="ai-error">⚠️ AI分析失败：${escHtml(err.message)}<br><small>请确认后端服务已启动（python server.py）</small></div>`;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '💾 保存今日记录';
+    }
+  }
+
+  function renderAiPanel(data) {
+    const content = document.getElementById('aiPanelContent');
+    let html = '';
+
+    // 知识点总结
+    if (data.summary && data.summary.length > 0) {
+      html += `<div class="ai-section">
+        <div class="ai-section-title">📖 知识点总结</div>`;
+      data.summary.forEach(s => {
+        html += `<div class="ai-subject-block">
+          <div class="ai-subject-name">${escHtml(s.subject)}</div>
+          <ul class="ai-points">${(s.points||[]).map(p => `<li>${escHtml(p)}</li>`).join('')}</ul>
+          ${s.tips ? `<div class="ai-tips">💡 ${escHtml(s.tips)}</div>` : ''}
+        </div>`;
+      });
+      html += `</div>`;
+    }
+
+    // 学习资源
+    if (data.resources && data.resources.length > 0) {
+      html += `<div class="ai-section">
+        <div class="ai-section-title">🔗 免费学习资源</div>
+        <div class="ai-resource-list">`;
+      data.resources.forEach(r => {
+        const title = escHtml(r.title || '');
+        const url = r.url || '#';
+        const desc = escHtml(r.desc || '');
+        html += `<div class="ai-resource-item">
+          <div class="ai-resource-icon">🌐</div>
+          <div class="ai-resource-info">
+            <a class="ai-resource-title" href="${escHtml(url)}" target="_blank" rel="noopener">${title}</a>
+            ${desc ? `<div class="ai-resource-desc">${desc}</div>` : ''}
+          </div>
+        </div>`;
+      });
+      html += `</div></div>`;
+    }
+
+    // 学习计划
+    if (data.plan) {
+      const p = data.plan;
+      html += `<div class="ai-section">
+        <div class="ai-section-title">📅 学习计划</div>
+        <div class="ai-plan-box">`;
+      if (p.today) html += `<div class="ai-plan-row"><span class="ai-plan-key">今天：</span>${escHtml(p.today)}</div>`;
+      if (p.week)  html += `<div class="ai-plan-row"><span class="ai-plan-key">本周：</span>${escHtml(p.week)}</div>`;
+      if (p.encouragement) html += `<div class="ai-plan-row ai-encourage">✨ ${escHtml(p.encouragement)}</div>`;
+      html += `</div></div>`;
+    }
+
+    content.innerHTML = html || '<div style="color:var(--text-muted);font-size:14px;">暂无分析结果</div>';
+  }
+
+  // ===== STATS =====
+  function renderStats() {
+    const records = getRecords();
+    document.getElementById('statDays').textContent = records.length;
+
+    let subjectCount = 0, questionCount = 0;
+    records.forEach(r => {
+      subjectCount += r.entries.length;
+      r.entries.forEach(e => { if (e.confused.trim()) questionCount++; });
+    });
+    document.getElementById('statSubjects').textContent = subjectCount;
+    document.getElementById('statQuestions').textContent = questionCount;
+
+    // streak
+    let streak = 0;
+    const today = new Date();
+    for (let i = 0; i < 365; i++) {
+      const d = new Date(today); d.setDate(d.getDate() - i);
+      const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      if (records.find(r => r.date === key)) { streak++; } else if (i > 0) { break; }
+    }
+    document.getElementById('statStreak').textContent = streak;
+  }
+
+  // ===== RECENT LOG =====
+  function renderRecentLog() {
+    const records = getRecords().slice(0, 5);
+    const container = document.getElementById('recentLog');
+    if (records.length === 0) {
+      container.innerHTML = '<div class="empty-log">暂无记录，快去填写今天的学习内容吧！</div>';
+      return;
+    }
+    container.innerHTML = records.map(r => {
+      const chips = r.entries.map(e => {
+        const s = SUBJECTS.find(x => x.id === e.subjectId);
+        return `<span class="log-chip ${s ? s.cls : ''}">${e.subjectLabel}</span>`;
+      }).join('');
+      const preview = r.entries[0]?.learned?.slice(0, 30) || '（已记录）';
+      return `
+        <div class="log-item">
+          <div class="log-date">${r.date}</div>
+          <div>${preview}${r.entries[0]?.learned?.length > 30 ? '...' : ''}</div>
+          <div class="log-subjects">${chips}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // ===== PROFILE SAVE =====
+  function saveProfile() {
+    const nickname = document.getElementById('inputNickname').value.trim();
+    const grade    = document.getElementById('inputGrade').value;
+    const school   = document.getElementById('inputSchool').value.trim();
+    const region   = document.getElementById('inputRegion').value.trim();
+    if (!nickname) { alert('请填写昵称'); return; }
+    if (!grade)    { alert('请选择年级'); return; }
+    if (!school)   { alert('请填写学校名称'); return; }
+    const profile = { nickname, grade, school, region, createdAt: new Date().toISOString() };
+    localStorage.setItem('aiXueBan_profile', JSON.stringify(profile));
+    document.getElementById('onboardingModal').classList.add('hidden');
+    updateNav(profile);
+    showToast('🎉 欢迎加入 AI学伴！');
+  }
+
+  // ===== TOAST =====
+  let toastTimer;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+  }
+
+  init();
+</script>
+</body>
+</html>
