@@ -4,28 +4,12 @@
     {
       "src": "server.py",
       "use": "@vercel/python"
-    },
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "profile.html",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "src": "/api/analyze",
+      "src": "/(.*)",
       "dest": "server.py"
-    },
-    {
-      "src": "/profile.html",
-      "dest": "/profile.html"
-    },
-    {
-      "src": "/",
-      "dest": "/index.html"
     }
   ]
 }
