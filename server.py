@@ -23,7 +23,7 @@ def profile():
 
 @app.route('/feed.html')
 def feed():
-    return render_template('feed.html')
+    return send_from_directory('templates', 'feed.html')
 
 # Kimi API（兼容 OpenAI 格式）
 # 从环境变量读取，也可直接替换为字符串：api_key="sk-..."
