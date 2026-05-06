@@ -28,7 +28,7 @@ def feed():
 # Kimi API（兼容 OpenAI 格式）
 # 从环境变量读取，也可直接替换为字符串：api_key="sk-..."
 client = OpenAI(
-    api_key=" ",
+    api_key=os.getenv("OPENAI_API_KEY"),
     base_url="https://api.moonshot.cn/v1",
 )
 
